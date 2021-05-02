@@ -46,6 +46,7 @@
   "main": "index.js",
   "dependencies": {
     "browser-sync": "^2.26.14",
+    "fuse.js": "^6.4.6",
     "gulp": "^4.0.2",
     "gulp-sass": "^4.1.0",
     "gulp-sourcemaps": "^3.0.0"

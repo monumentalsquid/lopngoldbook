@@ -144,6 +144,11 @@ function gold_book_lopn_scripts() {
 	wp_style_add_data( 'gold-book-lopn-style', 'rtl', 'replace' );
 
 	wp_enqueue_script( 'gold-book-lopn-navigation', get_template_directory_uri() . '/js/navigation.js', array(), _S_VERSION, true );
+	wp_register_script( 'jQuery', 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js', null, null, true );
+	wp_enqueue_script('jQuery');
+	wp_register_script( 'fusejs', 'https://cdn.jsdelivr.net/npm/fuse.js@6.4.6', null, null, true );
+	wp_enqueue_script('fusejs');
+
 
 	if ( is_singular() && comments_open() && get_option( 'thread_comments' ) ) {
 		wp_enqueue_script( 'comment-reply' );
