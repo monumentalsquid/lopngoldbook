@@ -178,3 +178,57 @@ if ( defined( 'JETPACK__VERSION' ) ) {
 	require get_template_directory() . '/inc/jetpack.php';
 }
 
+
+/**
+ * ACF Theme Options
+ */
+if( function_exists('acf_add_options_page') ) {
+	
+	acf_add_options_page(array(
+		'page_title' 	=> 'Gold Book Settings',
+		'menu_title'	=> 'Gold Book Settings',
+		'menu_slug' 	=> 'theme-general-settings',
+		'capability'	=> 'edit_posts',
+		'redirect'		=> false
+	));
+}
+
+/**
+ * Remove default Posts type since no blog
+ */
+
+// Remove side menu
+add_action( 'admin_menu', 'remove_default_post_type' );
+function remove_default_post_type() {
+	remove_menu_page( 'edit.php' );
+}
+// Remove +New post in top Admin Menu Bar
+add_action( 'admin_bar_menu', 'remove_default_post_type_menu_bar', 999 );
+function remove_default_post_type_menu_bar( $wp_admin_bar ) {
+	$wp_admin_bar->remove_node( 'new-post' );
+}
+// Remove Quick Draft Dashboard Widget
+add_action( 'wp_dashboard_setup', 'remove_draft_widget', 999 );
+function remove_draft_widget(){
+	remove_meta_box( 'dashboard_quick_press', 'dashboard', 'side' );
+}
+
+
+/*remove message above password protect form*/
+add_filter( 'the_password_form', 'custom_password_protected_form' );
+
+function custom_password_protected_form($output) {
+    global $post;
+    $replacement_text = '';
+    $output = str_replace(__( 'This content is password protected. To view it please enter your password below:' ), $replacement_text, $output);
+    return $output;
+}
+
+/*add placeholder to password protect form*/
+function my_theme_password_placeholder($output) {
+	$placeholder = 'Password';
+	$search = 'type="password"';
+	return str_replace($search, $search . " placeholder=\"$placeholder\"", $output);
+}
+add_filter('the_password_form', 'my_theme_password_placeholder');
+
