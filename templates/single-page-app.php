@@ -10,6 +10,10 @@ $home_subheader = get_field('app_instructions_subnheader', 'option');
 $pw_subheader = get_field('introduction_subheader', 'option');
 $pw_inquiry = get_field('inquiry_message', 'option');
 
+//JSON Feed URL
+$request = wp_remote_get( 'https://workflow-automation.podio.com/podiofeed.php?c=13265&a=282144&f=5127' );
+$body = wp_remote_retrieve_body( $request );
+$data = json_decode( $body );
 
 ?>
 
@@ -32,8 +36,8 @@ $pw_inquiry = get_field('inquiry_message', 'option');
           </div>
           <!--Search Results-->
           <div class="app-results-cont">
-            <div class="app-results-list-cont">
-              <?php get_template_part( 'template-parts/content', 'result-list' ); ?>
+            <div id="search-results" class="app-results-list-cont">
+              <?php //get_template_part( 'template-parts/content', 'result-list' ); ?>
             </div>
             <div class="app-contact-details-cont">
               <?php get_template_part( 'partials/content', 'contact-details-box' ); ?>
@@ -64,16 +68,58 @@ get_footer();
 <script>
 
 jQuery( document ).ready(function() {
-  const fuse = new Fuse(data, {
+
+  //Render Search Results Function
+  function renderSearchResults() {
+    var vPool=""; //reset vPool to empty #search-results
+    var searchTerm = jQuery("#search-field").val();
+    var result = fuse.search(searchTerm);
+
+    jQuery.each(result, function(i, val) {
+      vPool += 
+      '<div class="show-block">' + 
+        '<div class="show-block-inner">' + 
+          '<div class="show-title-box">' + 
+            '<h4 class="green">' + val.item.title + '</h4>' + 
+            '<p class="show-league black">NBA</p> | <p class="show-conf black">Western Conference</p>' + 
+          '</div>' + 
+          '<div class="show-location-box">' + 
+            '<p class="show-label-header gray">Location</p>' + 
+            '<p class="show-league black">Los Angeles, CA</p>' + 
+          '</div>' + 
+        '</div>' + 
+      '</div>'
+    });
+    jQuery('#search-results').html(vPool);
+  }
+
+
+  //Search On Submit
+  jQuery('#search-submit').click(function() {
+    renderSearchResults();
+  });
+
+
+  //Search on field Enter
+  jQuery('#search-field').keypress(function (e) {
+    if (e.which == 13) {
+      renderSearchResults();
+      return false;
+    }
+  });
+  
+
+  //Encode JSON object, instantiate Fuse.js object
+  var arr;
+  arr = <?php echo json_encode( $data ); ?>;
+
+  const fuse = new Fuse(arr, {
     includeScore: true,
+    threshold: 0.35,
     keys: [ 
-      'lopn-podcast-name'
+      'title'
     ]
   })
-
-  const result = fuse.search('lake');
-
-  console.log('results', results);
   
 });
 
