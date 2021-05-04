@@ -10,11 +10,6 @@ $home_subheader = get_field('app_instructions_subnheader', 'option');
 $pw_subheader = get_field('introduction_subheader', 'option');
 $pw_inquiry = get_field('inquiry_message', 'option');
 
-//JSON Feed URL
-$request = wp_remote_get( 'https://workflow-automation.podio.com/podiofeed.php?c=13265&a=282144&f=5127' );
-$body = wp_remote_retrieve_body( $request );
-$data = json_decode( $body );
-
 ?>
 
 <main id="primary" class="site-main home-app-main">
@@ -63,11 +58,39 @@ $data = json_decode( $body );
 
 get_footer();
 
+//JSON Feed URL
+$url = 'https://workflow-automation.podio.com/podiofeed.php?c=13265&a=282144&f=5127';
+$res_args = array(
+  'timeout'     => 10,
+  'sslverify' => false
+); 
+$response = wp_remote_get( esc_url_raw( $url ), $res_args );
+if ( is_wp_error( $response ) ) {
+  echo 'wp_remote_get error';
+} else {
+  $body = wp_remote_retrieve_body( $response );
+  $data = json_decode( $body, true );
+}
+
 ?>
+
 
 <script>
 
-jQuery( document ).ready(function() {
+jQuery( document ).ready(function($) {
+
+
+  //Encode JSON object, instantiate Fuse.js object
+  var arr = <?php echo json_encode( $data ); ?>;
+  
+  const fuse = new Fuse(arr, {
+    includeScore: true,
+    threshold: 0.35,
+    keys: [ 
+      'title'
+    ]
+  })
+  
 
   //Render Search Results Function
   function renderSearchResults() {
@@ -108,18 +131,6 @@ jQuery( document ).ready(function() {
     }
   });
   
-
-  //Encode JSON object, instantiate Fuse.js object
-  var arr;
-  arr = <?php echo json_encode( $data ); ?>;
-
-  const fuse = new Fuse(arr, {
-    includeScore: true,
-    threshold: 0.35,
-    keys: [ 
-      'title'
-    ]
-  })
   
 });
 

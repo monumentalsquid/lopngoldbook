@@ -9,8 +9,9 @@ body {
   }
   main {
     padding-top: 210px;
-    background: transparent -webkit-gradient(linear, left top, left bottom, from(#1A2902), to(#000000)) 0% 0% no-repeat padding-box;
-    background: transparent linear-gradient(180deg, #1A2902 0%, #000000 100%) 0% 0% no-repeat padding-box;
+    background: #1A2902;
+    // background: transparent -webkit-gradient(linear, left top, left bottom, from(#1A2902), to(#000000)) 0% 0% no-repeat padding-box;
+    // background: transparent linear-gradient(180deg, #1A2902 0%, #000000 100%) 0% 0% no-repeat padding-box;
     min-height: 100vh;
     input[type="submit"] {
       height: 58px;
